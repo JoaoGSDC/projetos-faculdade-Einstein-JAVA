@@ -46,7 +46,7 @@ public class Login extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(209, 203, 19));
 
-        jLabel2.setIcon(new javax.swing.ImageIcon("C:\\Users\\Kezia\\Documents\\NetBeansProjects\\Correios Einstein\\src\\correios\\einstein\\image\\logo.png")); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/correios/einstein/image/logo.png"))); // NOI18N
 
         jLabel3.setBackground(new java.awt.Color(204, 180, 0));
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
