@@ -7,7 +7,7 @@ package correios.einstein;
 
 /**
  *
- * @author Kezia
+ * @author JoaoGSDC
  */
 public class CorreiosEinstein {
 
