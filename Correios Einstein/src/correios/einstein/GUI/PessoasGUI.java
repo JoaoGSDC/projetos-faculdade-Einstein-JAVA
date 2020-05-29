@@ -1,19 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package correios.einstein.GUI;
 
 import correios.einstein.DAO.PessoasDAO;
-import java.awt.Color;
 import java.sql.ResultSet;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author JoaoGSDC
- */
+
 public class PessoasGUI extends javax.swing.JFrame {
 
     PessoasDAO pessoaDAO = new PessoasDAO();
@@ -24,22 +15,14 @@ public class PessoasGUI extends javax.swing.JFrame {
         carregar();
     }
 
-    /*private void tabela() {
-        DefaultTableModel modelotabela = (DefaultTableModel) tblDados.getModel();
-
-        modelotabela.setColumnCount(1);
-        modelotabela.setRowCount(0);
-
-        tblDados.getColumnModel().getColumn(0).setHeaderValue("Nome");
-    }*/
-
     private void carregar() {
         DefaultTableModel modelotabela = (DefaultTableModel) tblDados.getModel();
 
-        modelotabela.setColumnCount(1);
+        modelotabela.setColumnCount(2);
         modelotabela.setRowCount(0);
 
         tblDados.getColumnModel().getColumn(0).setHeaderValue("Nome");
+        tblDados.getColumnModel().getColumn(1).setHeaderValue("Id");
 
         ResultSet rs = pessoaDAO.consultar();
 
@@ -47,7 +30,8 @@ public class PessoasGUI extends javax.swing.JFrame {
         try {
             while (rs.next()) {
                 modelotabela.addRow(new String[modelotabela.getColumnCount()]);
-                modelotabela.setValueAt(rs.getString("nome"), linha, 0);
+                modelotabela.setValueAt(rs.getString("id"), linha, 0);
+                modelotabela.setValueAt(rs.getString("nome"), linha, 1);
                 linha++;
             }
         } catch (Exception e) {
@@ -83,6 +67,8 @@ public class PessoasGUI extends javax.swing.JFrame {
         btnSair = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDados = new javax.swing.JTable();
+        btnExcluir = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
 
         jLabel5.setText("Cidade");
 
@@ -134,6 +120,20 @@ public class PessoasGUI extends javax.swing.JFrame {
             }
         ));
         jScrollPane1.setViewportView(tblDados);
+
+        btnExcluir.setText("Excluir");
+        btnExcluir.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnExcluirMouseClicked(evt);
+            }
+        });
+
+        btnEditar.setText("Editar");
+        btnEditar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnEditarMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -187,7 +187,11 @@ public class PessoasGUI extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnSalvar))
+                        .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -239,7 +243,9 @@ public class PessoasGUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
-                    .addComponent(btnSair))
+                    .addComponent(btnSair)
+                    .addComponent(btnEditar)
+                    .addComponent(btnExcluir))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -256,6 +262,20 @@ public class PessoasGUI extends javax.swing.JFrame {
         pessoaDAO.salvar(txtNome.getText(), Integer.parseInt(txtCep.getText()), txtTelefone.getText(), txtEmail.getText(), txtPresencaWeb.getText());
         carregar();
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnExcluirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExcluirMouseClicked
+        int id = Integer.parseInt(tblDados.getValueAt(tblDados.getSelectedRow(), 0).toString());
+        
+        pessoaDAO.excluir(id);
+        carregar();
+    }//GEN-LAST:event_btnExcluirMouseClicked
+
+    private void btnEditarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEditarMouseClicked
+        int id = Integer.parseInt(tblDados.getValueAt(tblDados.getSelectedRow(), 0).toString());
+
+        pessoaDAO.editar(id, txtNome.getText(), Integer.parseInt(txtCep.getText()), txtTelefone.getText(), txtEmail.getText(), txtPresencaWeb.getText());
+        carregar();
+    }//GEN-LAST:event_btnEditarMouseClicked
 
     /**
      * @param args the command line arguments
@@ -293,6 +313,8 @@ public class PessoasGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEditar;
+    private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnSair;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JLabel jLabel1;

@@ -6,10 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- *
- * @author JoaoGSDC
- */
 public class EnderecosDAO {
 
     Connection con;
@@ -17,7 +13,7 @@ public class EnderecosDAO {
     public boolean conectar() {
         boolean retorno = false;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost/prova1?useTimezone=true&serverTimezone=UTC", "root", "admin");
+            con = DriverManager.getConnection("jdbc:mysql://localhost/prova2?useTimezone=true&serverTimezone=UTC", "root", "admin");
             retorno = true;
         } catch (SQLException e) {
             System.err.println("Erro de conexão:\n" + e);
@@ -55,26 +51,6 @@ public class EnderecosDAO {
         } catch (SQLException ex) {
             System.err.println("Erro INSERT: " + ex);
         }
-    }
-
-    public boolean editar(int id, String nome, String cep, String telefone, String email, String presencaWeb) {
-        boolean retorno = false;
-        try {
-            PreparedStatement stmt;
-            stmt = (PreparedStatement) this.con.prepareStatement(
-                    "UPDATE pessoas SET "
-                    + "nome = '" + nome + "', "
-                    + "cep = '" + cep + "', "
-                    + "telefone = '" + telefone + "', "
-                    + "presencaWeb = '" + presencaWeb + "' "
-                    + "WHERE id = " + id + ";");
-            stmt.execute();
-            stmt.close();
-            retorno = true;
-        } catch (SQLException ex) {
-            System.err.println("Erro UPDATE: " + ex);
-        }
-        return retorno;
     }
 
     public void consultar() {

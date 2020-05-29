@@ -3,10 +3,6 @@ package correios.einstein.GUI;
 import correios.einstein.GUI.PessoasGUI;
 import correios.einstein.GUI.EnderecosGUI;
 
-/**
- *
- * @author JoaoGSDC
- */
 public class MainGUI extends javax.swing.JFrame {
 
     public MainGUI() {

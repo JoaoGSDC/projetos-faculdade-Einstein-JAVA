@@ -6,10 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- *
- * @author JoaoGSDC
- */
 public class PessoasDAO {
 
     Connection con;
@@ -17,7 +13,7 @@ public class PessoasDAO {
     public boolean conectar() {
         boolean retorno = false;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost/prova1?useTimezone=true&serverTimezone=UTC", "root", "admin");
+            con = DriverManager.getConnection("jdbc:mysql://localhost/prova2?useTimezone=true&serverTimezone=UTC", "root", "admin");
             retorno = true;
         } catch (SQLException e) {
             System.err.println("Erro de conexão:\n" + e);
@@ -44,7 +40,7 @@ public class PessoasDAO {
         }
     }
 
-    public boolean editar(int id, String nome, String cep, String telefone, String email, String presencaWeb) {
+    public boolean editar(int id, String nome, int cep, String telefone, String email, String presencaWeb) {
         boolean retorno = false;
         try {
             PreparedStatement stmt;

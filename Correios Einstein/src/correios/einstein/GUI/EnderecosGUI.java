@@ -2,10 +2,6 @@ package correios.einstein.GUI;
 
 import correios.einstein.DAO.EnderecosDAO;
 
-/**
- *
- * @author JoaoGSDC
- */
 public class EnderecosGUI extends javax.swing.JFrame {
 
     public EnderecosGUI() {
