@@ -15,6 +15,7 @@ public class EnderecosGUI extends javax.swing.JFrame {
         initComponents();
         enderecoDAO.conectar();
         carregar();
+        this.setLocationRelativeTo(null);
     }
 
     private void carregar() {

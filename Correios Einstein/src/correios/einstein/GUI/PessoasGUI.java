@@ -18,6 +18,7 @@ public class PessoasGUI extends javax.swing.JFrame {
         initComponents();
         pessoaDAO.conectar();
         carregar();
+        this.setLocationRelativeTo(null);
     }
 
     private void carregar() {
