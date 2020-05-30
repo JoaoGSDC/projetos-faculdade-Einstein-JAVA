@@ -1,13 +1,18 @@
 package correios.einstein.GUI;
 
+import correios.einstein.DAO.EnderecosDAO;
 import correios.einstein.DAO.PessoasDAO;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
 
 public class PessoasGUI extends javax.swing.JFrame {
 
     PessoasDAO pessoaDAO = new PessoasDAO();
+    EnderecosDAO enderecoDAO = new EnderecosDAO();
     
     public PessoasGUI() {
         initComponents();
@@ -21,8 +26,8 @@ public class PessoasGUI extends javax.swing.JFrame {
         modelotabela.setColumnCount(2);
         modelotabela.setRowCount(0);
 
-        tblDados.getColumnModel().getColumn(0).setHeaderValue("Nome");
-        tblDados.getColumnModel().getColumn(1).setHeaderValue("Id");
+        tblDados.getColumnModel().getColumn(0).setHeaderValue("ID");
+        tblDados.getColumnModel().getColumn(1).setHeaderValue("Nome");
 
         ResultSet rs = pessoaDAO.consultar();
 
@@ -54,7 +59,7 @@ public class PessoasGUI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         txtCidade = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        txtEstado = new javax.swing.JTextField();
+        txtUf = new javax.swing.JTextField();
         txtCep = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         txtTelefone = new javax.swing.JTextField();
@@ -80,11 +85,25 @@ public class PessoasGUI extends javax.swing.JFrame {
 
         jLabel2.setText("Endereço");
 
+        txtEndereco.setEnabled(false);
+
         jLabel3.setText("Bairro");
+
+        txtBairro.setEnabled(false);
 
         jLabel4.setText("Cidade");
 
-        jLabel6.setText("Estado");
+        txtCidade.setEnabled(false);
+
+        jLabel6.setText("Uf");
+
+        txtUf.setEnabled(false);
+
+        txtCep.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCepFocusLost(evt);
+            }
+        });
 
         jLabel7.setText("CEP");
 
@@ -119,6 +138,11 @@ public class PessoasGUI extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblDados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDadosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblDados);
 
         btnExcluir.setText("Excluir");
@@ -169,7 +193,7 @@ public class PessoasGUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtUf, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -221,7 +245,7 @@ public class PessoasGUI extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel6)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtUf, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel2)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(21, 21, 21)
@@ -276,6 +300,38 @@ public class PessoasGUI extends javax.swing.JFrame {
         pessoaDAO.editar(id, txtNome.getText(), Integer.parseInt(txtCep.getText()), txtTelefone.getText(), txtEmail.getText(), txtPresencaWeb.getText());
         carregar();
     }//GEN-LAST:event_btnEditarMouseClicked
+
+    private void txtCepFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCepFocusLost
+        try {
+            ResultSet rs = enderecoDAO.consultarCep(Integer.parseInt(txtCep.getText()));
+            txtEndereco.setText(rs.getString("l.descricao"));
+            txtBairro.setText(rs.getString("b.descricao"));
+            txtCidade.setText(rs.getString("c.descricao"));
+            txtUf.setText(rs.getString("c.uf"));
+        } catch (SQLException ex) {
+            Logger.getLogger(PessoasGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_txtCepFocusLost
+
+    private void tblDadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDadosMouseClicked
+        try {
+            int id = Integer.parseInt(tblDados.getValueAt(tblDados.getSelectedRow(), 0).toString());
+            ResultSet rs = pessoaDAO.consultarPessoa(id);
+            txtNome.setText(rs.getString("nome"));
+            txtCep.setText(rs.getString("cep"));
+            txtTelefone.setText(rs.getString("telefone"));
+            txtEmail.setText(rs.getString("email"));
+            txtPresencaWeb.setText(rs.getString("presencaWeb"));
+            
+            rs = enderecoDAO.consultarCep(Integer.parseInt(txtCep.getText()));
+            txtEndereco.setText(rs.getString("l.descricao"));
+            txtBairro.setText(rs.getString("b.descricao"));
+            txtCidade.setText(rs.getString("c.descricao"));
+            txtUf.setText(rs.getString("c.uf"));
+        } catch (SQLException ex) {
+            Logger.getLogger(EnderecosGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_tblDadosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -335,9 +391,9 @@ public class PessoasGUI extends javax.swing.JFrame {
     private javax.swing.JTextField txtCidade;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtEndereco;
-    private javax.swing.JTextField txtEstado;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtPresencaWeb;
     private javax.swing.JTextField txtTelefone;
+    private javax.swing.JTextField txtUf;
     // End of variables declaration//GEN-END:variables
 }

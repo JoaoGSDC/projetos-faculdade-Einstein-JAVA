@@ -85,4 +85,16 @@ public class PessoasDAO {
         }
         return retorno;
     }
+    
+    public ResultSet consultarPessoa(int id) {
+        try {
+            ResultSet rs = null;
+            PreparedStatement stmt = (PreparedStatement) this.con.prepareStatement("SELECT * FROM pessoas WHERE id = " + id);
+            rs = stmt.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            System.err.println("Erro INSERT: " + ex);
+        }
+        return null;
+    }
 }

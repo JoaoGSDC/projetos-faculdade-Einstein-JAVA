@@ -1,11 +1,54 @@
 package correios.einstein.GUI;
 
 import correios.einstein.DAO.EnderecosDAO;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 
 public class EnderecosGUI extends javax.swing.JFrame {
 
+    EnderecosDAO enderecoDAO = new EnderecosDAO();
+
     public EnderecosGUI() {
         initComponents();
+        enderecoDAO.conectar();
+        carregar();
+    }
+
+    private void carregar() {
+        DefaultTableModel modelotabela = (DefaultTableModel) tblDados.getModel();
+
+        modelotabela.setColumnCount(6);
+        modelotabela.setRowCount(0);
+
+        tblDados.getColumnModel().getColumn(0).setHeaderValue("ID");
+        tblDados.getColumnModel().getColumn(1).setHeaderValue("Cidade");
+
+        tblDados.getColumnModel().getColumn(2).setHeaderValue("ID");
+        tblDados.getColumnModel().getColumn(3).setHeaderValue("Logradouro");
+
+        tblDados.getColumnModel().getColumn(4).setHeaderValue("ID");
+        tblDados.getColumnModel().getColumn(5).setHeaderValue("Bairro");
+
+        ResultSet rs = enderecoDAO.consultar();
+
+        int linha = 0;
+        try {
+            while (rs.next()) {
+                modelotabela.addRow(new String[modelotabela.getColumnCount()]);
+                modelotabela.setValueAt(rs.getString("c.idcidade"), linha, 0);
+                modelotabela.setValueAt(rs.getString("c.descricao"), linha, 1);
+                modelotabela.setValueAt(rs.getString("l.idlogradouros"), linha, 2);
+                modelotabela.setValueAt(rs.getString("l.descricao"), linha, 3);
+                modelotabela.setValueAt(rs.getString("b.idbairros"), linha, 4);
+                modelotabela.setValueAt(rs.getString("b.descricao"), linha, 5);
+                linha++;
+            }
+        } catch (Exception e) {
+            System.err.println("Erro: " + e);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -27,7 +70,7 @@ public class EnderecosGUI extends javax.swing.JFrame {
         txtCepCidade = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblDados = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -57,7 +100,7 @@ public class EnderecosGUI extends javax.swing.JFrame {
 
         jLabel3.setText("CEP - Cidade");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblDados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -68,7 +111,12 @@ public class EnderecosGUI extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        tblDados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDadosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblDados);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -158,13 +206,31 @@ public class EnderecosGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        EnderecosDAO enderecoDAO = new EnderecosDAO();
-        enderecoDAO.salvar(0, 0, 0, txtUf.getText(), txtLogradouro.getText(), txtCidade.getText(), txtBairro.getText(), Integer.parseInt(txtCepLogradouro.getText()), Integer.parseInt(txtCepCidade.getText()));
+        int idCidade = Integer.parseInt(tblDados.getValueAt(tblDados.getSelectedRow(), 0).toString());
+        int idLogradouro = Integer.parseInt(tblDados.getValueAt(tblDados.getSelectedRow(), 2).toString());
+        int idBairro = Integer.parseInt(tblDados.getValueAt(tblDados.getSelectedRow(), 4).toString());
+        enderecoDAO.salvar(idCidade, idBairro, idLogradouro, txtUf.getText(), txtLogradouro.getText(), txtCidade.getText(), txtBairro.getText(), Integer.parseInt(txtCepLogradouro.getText()), Integer.parseInt(txtCepCidade.getText()));
+        carregar();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
         dispose();
     }//GEN-LAST:event_btnSairActionPerformed
+
+    private void tblDadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDadosMouseClicked
+        try {
+            int idLogradouro = Integer.parseInt(tblDados.getValueAt(tblDados.getSelectedRow(), 2).toString());
+            ResultSet rs = enderecoDAO.consultarEndereco(idLogradouro);
+            txtLogradouro.setText(rs.getString("l.descricao"));
+            txtCepLogradouro.setText(rs.getString("l.cep"));
+            txtBairro.setText(rs.getString("b.descricao"));
+            txtCidade.setText(rs.getString("c.descricao"));
+            txtUf.setText(rs.getString("c.uf"));
+            txtCepCidade.setText(rs.getString("c.cep"));
+        } catch (SQLException ex) {
+            Logger.getLogger(EnderecosGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_tblDadosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -211,7 +277,7 @@ public class EnderecosGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tblDados;
     private javax.swing.JTextField txtBairro;
     private javax.swing.JTextField txtCepCidade;
     private javax.swing.JTextField txtCepLogradouro;

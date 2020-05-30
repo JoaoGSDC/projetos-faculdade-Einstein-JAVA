@@ -53,27 +53,54 @@ public class EnderecosDAO {
         }
     }
 
-    public void consultar() {
+    public ResultSet consultar() {
         try {
             ResultSet rs = null;
-            PreparedStatement stmt = (PreparedStatement) this.con.prepareStatement("SELECT * FROM pessoas");
+            PreparedStatement stmt
+                    = (PreparedStatement) this.con.prepareStatement(
+                            "SELECT l.*, b.*, c.* FROM logradouros AS l "
+                            + "INNER JOIN bairros AS b ON l.bairros_idbairros = b.idbairros "
+                            + "INNER JOIN cidades AS c ON l.idcidade = c.idcidade");
             rs = stmt.executeQuery();
+            return rs;
         } catch (SQLException ex) {
             System.err.println("Erro INSERT: " + ex);
         }
+        return null;
     }
 
-    public boolean excluir(int id) {
-        boolean retorno = false;
+    public ResultSet consultarCep(int cep) {
         try {
-            PreparedStatement stmt;
-            stmt = (PreparedStatement) this.con.prepareStatement("DELETE FROM pessoas WHERE id = " + id);
-            stmt.execute();
-            stmt.close();
-            retorno = true;
+            ResultSet rs = null;
+            PreparedStatement stmt
+                    = (PreparedStatement) this.con.prepareStatement(
+                            "SELECT l.*, b.*, c.* FROM logradouros AS l "
+                            + "INNER JOIN bairros AS b ON l.bairros_idbairros = b.idbairros "
+                            + "INNER JOIN cidades AS c ON l.idcidade = c.idcidade "
+                            + "WHERE l.cep = " + cep);
+            rs = stmt.executeQuery();
+            return rs;
         } catch (SQLException ex) {
-            System.err.println("Erro DELETE: " + ex);
+            System.err.println("Erro INSERT: " + ex);
         }
-        return retorno;
+        return null;
+    }
+
+    public ResultSet consultarEndereco(int id) {
+        try {
+            ResultSet rs = null;
+            PreparedStatement stmt
+                    = (PreparedStatement) this.con.prepareStatement(
+                            "SELECT l.*, b.*, c.* FROM logradouros AS l "
+                            + "INNER JOIN bairros AS b ON l.bairros_idbairros = b.idbairros "
+                            + "INNER JOIN cidades AS c ON l.idcidade = c.idcidade "
+                            + "WHERE l.idlogradouros = " + id
+                    );
+            rs = stmt.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            System.err.println("Erro INSERT: " + ex);
+        }
+        return null;
     }
 }
